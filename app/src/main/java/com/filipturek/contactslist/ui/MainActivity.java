@@ -1,9 +1,10 @@
-package com.filipturek.contactslist;
+package com.filipturek.contactslist.ui;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.filipturek.contactslist.R;
 import com.filipturek.contactslist.http.model.Contact;
 import com.filipturek.contactslist.http.retrofit.ContactsApi;
 import com.google.gson.Gson;
