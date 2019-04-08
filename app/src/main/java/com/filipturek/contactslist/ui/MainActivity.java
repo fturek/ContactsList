@@ -1,6 +1,7 @@
 package com.filipturek.contactslist.ui;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -10,6 +11,12 @@ import com.filipturek.contactslist.http.retrofit.ContactsApi;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 import retrofit2.Call;
@@ -25,35 +32,18 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Gson gson = new GsonBuilder()
-                .setLenient()
-                .create();
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.androidhive.info/")
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
+        ContactsListFragment contactsFragment = (ContactsListFragment)
+                getSupportFragmentManager().findFragmentByTag(ContactsListFragment.TAG);
 
-        ContactsApi contactsApi = retrofit.create(ContactsApi.class);
+        if (contactsFragment == null) {
+            contactsFragment = ContactsListFragment.newInstance();
 
-        Call<List<Contact>> call = contactsApi.listContacts();
-        call.enqueue(new Callback<List<Contact>>() {
-            @Override
-            public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
-                if (response.isSuccessful()) {
-                    List<Contact> contactList = response.body();
-                    for (Contact contact : contactList) {
-                        Log.e("FT", contact.getName() + " " + contact.getPhone() + " " + contact.getImage());
-                    }
-                } else {
-                    Log.e("", "! esponse.isSuccessful()");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Contact>> call, Throwable t) {
-                Log.e("", "onFailure");
-            }
-        });
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.container, contactsFragment, ContactsListFragment.TAG)
+                    .addToBackStack(null)
+                    .commit();
+        }
     }
 }
